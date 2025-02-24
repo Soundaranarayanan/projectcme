@@ -17,35 +17,41 @@ public class Employee {
     public Employee() {}
 
     public Employee(int ID, Database database) {
-        try {
-            this.ID = ID;
+        this.ID = ID;
+        loadEmployeeFromDB(database);
+    }
 
-            String select = "SELECT ID, FIRSTNAME, LASTNAME, EMAIL, PHONENUMBER, BIRTHDATE, "
-                          + "SALARY, DEPARTMENT, PASSWORD FROM Expleo.EMPLOYEES WHERE ID = ?";
+    // ✅ Load Employee Data
+    private void loadEmployeeFromDB(Database database) {
+        String query = "SELECT * FROM Expleo.EMPLOYEES WHERE ID = ?";
 
-            try (PreparedStatement pstmt = database.getConnection().prepareStatement(select)) {
-                pstmt.setInt(1, ID);
-                ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = database.getConnection().prepareStatement(query)) {
+            pstmt.setInt(1, ID);
+            ResultSet rs = pstmt.executeQuery();
 
-                if (rs.next()) {
-                    this.firstName = rs.getString("FIRSTNAME");
-                    this.lastName = rs.getString("LASTNAME");
-                    this.email = rs.getString("EMAIL");
-                    this.phoneNumber = rs.getString("PHONENUMBER");
-                    this.birthDate = rs.getString("BIRTHDATE");
-                    this.salary = rs.getDouble("SALARY");
-                    this.password = rs.getString("PASSWORD");
-
-                    int deptID = rs.getInt("DEPARTMENT");
-                    if (!rs.wasNull()) {  // ✅ Fix: Handle NULL department
-                        this.department = new Department(deptID, database);
-                    }
-                } else {
-                    System.out.println("No employee found with ID: " + ID);
-                }
+            if (rs.next()) {
+                populateFromResultSet(rs, database);
+            } else {
+                System.out.println("⚠️ No employee found with ID: " + ID);
             }
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("❌ Error loading employee: " + e.getMessage());
+        }
+    }
+
+    // ✅ Populate Employee Object from ResultSet
+    private void populateFromResultSet(ResultSet rs, Database database) throws SQLException {
+        this.firstName = rs.getString("FIRSTNAME");
+        this.lastName = rs.getString("LASTNAME");
+        this.email = rs.getString("EMAIL");
+        this.phoneNumber = rs.getString("PHONENUMBER");
+        this.birthDate = rs.getString("BIRTHDATE");
+        this.salary = rs.getDouble("SALARY");
+        this.password = rs.getString("PASSWORD");
+
+        int deptID = rs.getInt("DEPARTMENT");
+        if (!rs.wasNull()) {
+            this.department = new Department(deptID, database);
         }
     }
 
@@ -77,48 +83,65 @@ public class Employee {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    // ✅ Fixed update() method
+    // ✅ Optimized Update Method
     public void update(Database database) {
-        String update = "UPDATE Expleo.EMPLOYEES SET FIRSTNAME = ?, LASTNAME = ?, EMAIL = ?, "
-                      + "PHONENUMBER = ?, BIRTHDATE = ?, SALARY = ?, DEPARTMENT = ?, PASSWORD = ? "
-                      + "WHERE ID = ?";
+        String query = "UPDATE Expleo.EMPLOYEES SET FIRSTNAME = ?, LASTNAME = ?, EMAIL = ?, "
+                     + "PHONENUMBER = ?, BIRTHDATE = ?, SALARY = ?, DEPARTMENT = ?, PASSWORD = ? "
+                     + "WHERE ID = ?";
 
-        try (PreparedStatement pstmt = database.getConnection().prepareStatement(update)) {
-            pstmt.setString(1, this.firstName);
-            pstmt.setString(2, this.lastName);
-            pstmt.setString(3, this.email);
-            pstmt.setString(4, this.phoneNumber);
-            pstmt.setString(5, this.birthDate);
-            pstmt.setDouble(6, this.salary);
-            
-            if (this.department != null) {
-                pstmt.setInt(7, this.department.getID());
-            } else {
-                pstmt.setNull(7, Types.INTEGER);  // ✅ Handle NULL department
-            }
-
-            pstmt.setString(8, this.password);
-            pstmt.setInt(9, this.ID);
+        try (PreparedStatement pstmt = database.getConnection().prepareStatement(query)) {
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setString(3, email);
+            pstmt.setString(4, phoneNumber);
+            pstmt.setString(5, birthDate);
+            pstmt.setDouble(6, salary);
+            pstmt.setObject(7, (department != null) ? department.getID() : null, Types.INTEGER);
+            pstmt.setString(8, password);
+            pstmt.setInt(9, ID);
 
             int rowsUpdated = pstmt.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("Employee updated successfully!");
-            } else {
-                System.out.println("No employee found with the given ID.");
-            }
+            System.out.println(rowsUpdated > 0 ? "✅ Employee updated successfully!" : "⚠️ No employee found with the given ID.");
         } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("❌ Error updating employee: " + e.getMessage());
         }
     }
+
+    // ✅ Prevent NullPointerException in print()
     public void print() {
-    	System.out.println("ID : \t\t\t"+getID());
-    	System.out.println("Name : \t\t\t"+getFirstName()+" "+getLastName());
-    	System.out.println("Email : \t\t"+getEmail());
-    	System.out.println("PhoneNumber : \t\t"+getPhoneNumber());
-    	System.out.println("BirthDate : \t\t"+getBirthDate());
-    	System.out.println("Salary : \t\t"+getSalary());
-    	System.out.println("Department : \t\t"+getDepartment().getName());
-    	System.out.println("_____________________________________________________\n");
-    	//System.out.println("Password : \t\t"+getPassword());
+        System.out.println("ID : \t\t\t" + ID);
+        System.out.println("Name : \t\t\t" + firstName + " " + lastName);
+        System.out.println("Email : \t\t" + email);
+        System.out.println("PhoneNumber : \t\t" + phoneNumber);
+        System.out.println("BirthDate : \t\t" + birthDate);
+        System.out.println("Salary : \t\t" + salary);
+        System.out.println("Department : \t\t" + (department != null ? department.getName() : "None"));
+        System.out.println("_____________________________________________________\n");
+    }
+
+    // ✅ Improved Create Method
+    public void create(Database database) {
+        String query = "INSERT INTO Expleo.EMPLOYEES (ID, FIRSTNAME, LASTNAME, EMAIL, PHONENUMBER, BIRTHDATE, SALARY, DEPARTMENT, PASSWORD) "
+                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = database.getConnection().prepareStatement(query)) {
+            pstmt.setInt(1, ID);
+            pstmt.setString(2, firstName);
+            pstmt.setString(3, lastName);
+            pstmt.setString(4, email);
+            pstmt.setString(5, phoneNumber);
+            pstmt.setString(6, birthDate);
+            pstmt.setDouble(7, salary);
+            pstmt.setObject(8, (department != null) ? department.getID() : null, Types.INTEGER);
+            pstmt.setString(9, password);
+
+            int rowsInserted = pstmt.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("\n✅ Employee added successfully!");
+                print();
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Database Error: " + e.getMessage());
+        }
     }
 }

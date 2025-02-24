@@ -14,10 +14,10 @@ public class CreateDepartment implements Operation {
     @Override
     public void oper(Database database, Scanner scanner) {
         System.out.println("Enter Department Name: ");
-        String name = scanner.next();
+        String name = scanner.nextLine();
 
         int ID = 1; 
-        ArrayList<Department> departments = new ShowAllDepartments().getAllDepartments(database);
+        ArrayList<Department> departments = new ReadDepartments().getAllDepartments(database);
 
         if (!departments.isEmpty()) {
             ID = departments.get(departments.size() - 1).getID() + 1; // Auto-increment ID

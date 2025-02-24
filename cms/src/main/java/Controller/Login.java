@@ -8,6 +8,6 @@ public class Login {
 
 	
 	public static void main(String [] args) {
-		new DeleteEmployee().oper(new Database(), new Scanner(System.in));
+		new CreateEmployee().oper(new Database(), new Scanner(System.in));
 	}
 }

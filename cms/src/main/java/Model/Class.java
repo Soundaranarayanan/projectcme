@@ -5,7 +5,14 @@ public class Class {
 	private int ID;
 	private String title;
 	
-	public Class () {}
+	public Class () {
+		
+		
+	}
+	
+	public Class(int ID, Database database) {
+		
+	}
 	
 	public int getID() {
 		return ID;

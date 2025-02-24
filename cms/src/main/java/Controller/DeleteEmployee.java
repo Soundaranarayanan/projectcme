@@ -15,7 +15,7 @@ public class DeleteEmployee implements Operation {
         int ID = scanner.nextInt();
 
         while (ID < 0) {
-            new ShowAllEmployee().oper(database, scanner);
+            new ReadEmployee().oper(database, scanner);
             System.out.println("Enter Employee ID (-1 to Show all Employees): ");
             ID = scanner.nextInt();
         }

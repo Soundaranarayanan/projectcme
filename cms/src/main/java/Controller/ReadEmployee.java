@@ -8,7 +8,7 @@ import Model.Department;
 import Model.Employee;
 import Model.Operation;
 
-public class ShowAllEmployee implements Operation {
+public class ReadEmployee implements Operation {
 
     @Override
     public void oper(Database database, Scanner scanner) {
