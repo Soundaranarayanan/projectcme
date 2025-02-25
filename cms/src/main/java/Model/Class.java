@@ -3,7 +3,7 @@ package Model;
 public class Class {
 
 	private int ID;
-	private String title;
+	private String name;
 	
 	public Class () {
 		
@@ -20,10 +20,10 @@ public class Class {
 	public void setID(int ID) {
 		this.ID=ID;
 	}
-	public String getTitle() {
-		return title;
+	public String getName() {
+		return name;
 	}
-	public void setTitle(String title) {
-		this.title=title;
+	public void setName(String name) {
+		this.name=name;
 	}
 }
