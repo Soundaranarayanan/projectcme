@@ -6,56 +6,80 @@ public class Database {
     private final String user = "system";
     private final String pass = "karan";
     private final String url = "jdbc:oracle:thin:@localhost:1521:xe";
-    private Connection connection;
-
-    // Constructor to establish a connection
+    
+    // Constructor calls connect() to ensure the initial connection
     public Database() {
         connect();
     }
 
     // Method to establish/reconnect connection if needed
-    public void connect() {
+    public Connection connect() {
+        Connection conn = null;
         try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(url, user, pass);
-                System.out.println("✅ Database connected successfully.");
-            }
+            conn = DriverManager.getConnection(url, user, pass);
+         // System.out.println("✅ Database connected successfully.");
         } catch (SQLException e) {
-            System.out.println("❌ Database Connection Error: " + e.getMessage());
+            System.err.println("❌ Database Connection Error: " + e.getMessage());
         }
+        return conn;
     }
 
-    // Ensures connection is always active before returning it
+    // Returns a fresh connection every time
     public Connection getConnection() {
+        Connection conn = null;
         try {
-            if (connection == null || connection.isClosed()) {
-                connect();
+            conn = connect();  // Get a new connection
+            if (conn == null || conn.isClosed()) {
+                System.err.println("❌ Failed to get a database connection.");
             }
         } catch (SQLException e) {
-            System.out.println("❌ Connection Check Error: " + e.getMessage());
+            System.err.println("❌ Connection Check Error: " + e.getMessage());
         }
-        return connection;
+        return conn;
     }
 
     // Create a fresh statement every time
     public Statement getStatement() {
+        Statement stmt = null;
         try {
-            return getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            stmt = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         } catch (SQLException e) {
-            System.out.println("❌ Error creating statement: " + e.getMessage());
-            return null;
+            System.err.println("❌ Error creating statement: " + e.getMessage());
         }
+        return stmt;
     }
 
-    // Properly close the connection when done
-    public void close() {
+    // Close the provided connection
+    public void close(Connection conn) {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
                 System.out.println("🔒 Database connection closed.");
             }
         } catch (SQLException e) {
-            System.out.println("❌ Error closing connection: " + e.getMessage());
+            System.err.println("❌ Error closing connection: " + e.getMessage());
+        }
+    }
+
+    // Close the provided statement
+    public void close(Statement stmt) {
+        try {
+            if (stmt != null) {
+                stmt.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error closing statement: " + e.getMessage());
+        }
+    }
+
+    // Close the provided result set
+    public void close(ResultSet rs) {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error closing result set: " + e.getMessage());
         }
     }
 }

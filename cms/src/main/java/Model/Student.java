@@ -152,4 +152,7 @@ public class Student {
         System.out.println("Class      : " + (c != null ? c.getName() : "None"));
         System.out.println("--------------------------------------------------");
     }
+    public void showList() {
+    	System.out.println("");
+    }
 }

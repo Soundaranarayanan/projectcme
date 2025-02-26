@@ -8,6 +8,7 @@ public class Login {
 
 	
 	public static void main(String [] args) {
-		new DeleteStudent().oper(new Database(), new Scanner(System.in));
+		new DeleteCourse().oper(new Database(), new Scanner(System.in));
+		//new ReadClasses().oper(null, null);
 	}
 }
