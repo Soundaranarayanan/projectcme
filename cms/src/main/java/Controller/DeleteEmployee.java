@@ -10,12 +10,12 @@ import Model.Operation;
 public class DeleteEmployee implements Operation {
 
     @Override
-    public void oper(Database database, Scanner scanner) {
+    public void oper(Database database, Scanner scanner, int id) {
         System.out.println("Enter Employee ID (-1 to Show all Employees): ");
         int ID = scanner.nextInt();
 
         while (ID < 0) {
-            new ReadEmployee().oper(database, scanner);
+            new ReadEmployee().oper(database, scanner, id);
             System.out.println("Enter Employee ID (-1 to Show all Employees): ");
             ID = scanner.nextInt();
         }

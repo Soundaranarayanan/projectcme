@@ -9,7 +9,7 @@ import Model.Class;
 public class CreateClass implements Operation {
 
     @Override
-    public void oper(Database database, Scanner scanner) {
+    public void oper(Database database, Scanner scanner, int id) {
         System.out.println("Enter the Class Name:");
         scanner.nextLine();  // Consume any leftover newline
         String name = scanner.nextLine();  // Read full class name including spaces

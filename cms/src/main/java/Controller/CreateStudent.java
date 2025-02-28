@@ -10,7 +10,7 @@ import Model.Student;
 public class CreateStudent implements Operation {
 
     @Override
-    public void oper(Database database, Scanner scanner) {
+    public void oper(Database database, Scanner scanner,int id) {
         Student s = new Student();
         ArrayList<Student> students = new ReadStudents().getAllStudents(database);
         int ID = 0;
@@ -48,7 +48,7 @@ public class CreateStudent implements Operation {
             classID = scanner.nextInt();
 
             if (classID == -1) {
-                new ReadClasses().oper(database, scanner);
+                new ReadClasses().oper(database, scanner,id);
             }
 
         } while (classID == -1);

@@ -13,7 +13,7 @@ import Model.Class;
 public class CreateCourse implements Operation {
 
     @Override
-    public void oper(Database database, Scanner scanner) {
+    public void oper(Database database, Scanner scanner,int id) {
         Course c = new Course();
         int ID = generateNextID(database);
         c.setID(ID);
@@ -74,7 +74,7 @@ public class CreateCourse implements Operation {
             ID = scanner.nextInt();
             scanner.nextLine();  // Consume leftover newline
             if (ID == -1) {
-                displayOperation.oper(database, scanner);
+                displayOperation.oper(database, scanner,ID);
             }
         } while (ID == -1);
         return ID;

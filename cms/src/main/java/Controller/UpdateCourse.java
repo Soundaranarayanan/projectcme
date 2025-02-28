@@ -12,12 +12,12 @@ import Model.Class;
 public class UpdateCourse implements Operation {
 
     @Override
-    public void oper(Database database, Scanner scanner) {
+    public void oper(Database database, Scanner scanner, int id) {
         System.out.println("Enter Course ID (-1 to show all): ");
         int ID = scanner.nextInt();
 
         while (ID < 0) {
-            new ReadCourses().oper(database, scanner);
+            new ReadCourses().oper(database, scanner,id);
             System.out.println("Enter Course ID (-1 to show all): ");
             ID = scanner.nextInt();
         }
@@ -38,7 +38,7 @@ public class UpdateCourse implements Operation {
         System.out.println("Enter Class ID (-1 to keep, -2 to show all): ");
         int classID = scanner.nextInt();
         if (classID == -2) {
-            new ReadClasses().oper(database, scanner);
+            new ReadClasses().oper(database, scanner,id);
             System.out.println("Enter Class ID (-1 to keep): ");
             classID = scanner.nextInt();
         }
@@ -62,7 +62,7 @@ public class UpdateCourse implements Operation {
         System.out.println("Enter Prof ID (-1 to keep, -2 to show all): ");
         int profID = scanner.nextInt();
         if (profID == -2) {
-            new ReadEmployee().oper(database, scanner);
+            new ReadEmployee().oper(database, scanner,id);
             System.out.println("Enter Prof ID (-1 to keep): ");
             profID = scanner.nextInt();
         }
@@ -74,7 +74,7 @@ public class UpdateCourse implements Operation {
         System.out.println("Enter Department ID (-1 to keep, -2 to show all): ");
         int deptID = scanner.nextInt();
         if (deptID == -2) {
-            new ReadDepartments().oper(database, scanner);
+            new ReadDepartments().oper(database, scanner,id);
             System.out.println("Enter Department ID (-1 to keep): ");
             deptID = scanner.nextInt();
         }

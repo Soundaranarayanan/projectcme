@@ -13,7 +13,7 @@ import Model.Operation;
 public class ReadClasses implements Operation {
 
     @Override
-    public void oper(Database database, Scanner scanner) {
+    public void oper(Database database, Scanner scanner, int id) {
         for (Class c : getAllClasses(database)) {
             c.print();
         }

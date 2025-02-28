@@ -1,10 +1,6 @@
 package Model;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Course {
@@ -20,46 +16,46 @@ public class Course {
     public Course() {}
 
     public Course(int ID, Database database) {
-        setID(ID);
+        this.ID = ID;
+        this.students = new ArrayList<>();
+        loadFromDatabase(database);
+    }
+
+    private void loadFromDatabase(Database database) {
         String selectQuery = "SELECT * FROM Expleo.COURSES WHERE ID = ?";
         String studentQuery = "SELECT Student FROM Courses_" + ID;
 
         try (Connection conn = database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
-            
+
             pstmt.setInt(1, ID);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                setName(rs.getString("Name"));
+                this.name = rs.getString("Name");
                 int classID = rs.getInt("Class");
-                setDescription(rs.getString("Description"));
-                setLimit(rs.getInt("Limit"));
+                this.description = rs.getString("Description");
+                this.limit = rs.getInt("Limit");
                 int profID = rs.getInt("Prof");
                 int deptID = rs.getInt("Department");
 
-                setCurrentClass(new Class(classID, database));
-                setProf(new Employee(profID, database));
-                setDept(new Department(deptID, database));
+                this.c = (classID > 0) ? new Class(classID, database) : null;
+                this.prof = (profID > 0) ? new Employee(profID, database) : null;
+                this.dept = (deptID > 0) ? new Department(deptID, database) : null;
             }
 
             // Fetch students
             try (Statement stmt = conn.createStatement();
                  ResultSet rs2 = stmt.executeQuery(studentQuery)) {
-                
-                ArrayList<Student> students = new ArrayList<>();
                 while (rs2.next()) {
                     students.add(new Student(rs2.getInt("Student"), database));
                 }
-                setStudents(students);
             }
 
         } catch (SQLException e) {
+            System.err.println("❌ Error loading course: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-    public Course (int ID) {
-    	this.ID = ID;
     }
 
     public int getID() { return ID; }
@@ -99,6 +95,11 @@ public class Course {
     }
 
     public void create(Database database) {
+        if (c == null || prof == null || dept == null) {
+            System.out.println("❌ Error: Missing Class, Professor, or Department.");
+            return;
+        }
+
         String insertQuery = "INSERT INTO Expleo.COURSES (ID, NAME, CLASS, DESCRIPTION, LIMIT, PROF, DEPARTMENT) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String createTableQuery = "CREATE TABLE Courses_" + this.ID + " (Student INT)";
 
@@ -108,22 +109,20 @@ public class Course {
 
             pstmt.setInt(1, this.ID);
             pstmt.setString(2, this.name);
-            pstmt.setInt(3, this.c.getID());  
+            pstmt.setInt(3, this.c.getID());
             pstmt.setString(4, this.description);
             pstmt.setInt(5, this.limit);
-            pstmt.setInt(6, this.prof.getID());  
+            pstmt.setInt(6, this.prof.getID());
             pstmt.setInt(7, this.dept.getID());
 
             int rowsInserted = pstmt.executeUpdate();
             if (rowsInserted > 0) {
                 System.out.println("✅ Course Created Successfully.");
+                stmt.executeUpdate(createTableQuery);
+                System.out.println("✅ Table Courses_" + this.ID + " created.");
             } else {
                 System.out.println("⚠️ No course inserted.");
             }
-
-            // Create associated student table
-            stmt.executeUpdate(createTableQuery);
-            System.out.println("✅ Table Courses_" + this.ID + " created.");
 
         } catch (SQLException e) {
             System.out.println("❌ SQL Error: " + e.getMessage());
@@ -132,6 +131,11 @@ public class Course {
     }
 
     public void update(Database database) {
+        if (c == null || prof == null || dept == null) {
+            System.out.println("❌ Error: Missing Class, Professor, or Department.");
+            return;
+        }
+
         String updateQuery = "UPDATE Expleo.COURSES SET NAME = ?, CLASS = ?, DESCRIPTION = ?, LIMIT = ?, PROF = ?, DEPARTMENT = ? WHERE ID = ?";
 
         try (Connection conn = database.getConnection();
@@ -146,21 +150,17 @@ public class Course {
             pstmt.setInt(7, this.ID);
 
             int rowsUpdated = pstmt.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("✅ Course Updated Successfully.");
-            } else {
-                System.out.println("⚠️ No changes were made.");
-            }
+            System.out.println(rowsUpdated > 0 ? "✅ Course Updated Successfully." : "⚠️ No changes were made.");
 
         } catch (SQLException e) {
             System.out.println("❌ SQL Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     public void delete(Database database) {
         String deleteCourseQuery = "DELETE FROM Expleo.COURSES WHERE ID = ?";
-        String checkTableExistsQuery = "SELECT COUNT(*) FROM user_tables WHERE table_name = ?";
+        String checkTableExistsQuery = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ?";
         String dropTableQuery = "DROP TABLE Courses_" + this.ID;
 
         try (Connection conn = database.getConnection();
@@ -168,20 +168,16 @@ public class Course {
              PreparedStatement checkTableStmt = conn.prepareStatement(checkTableExistsQuery);
              Statement dropTableStmt = conn.createStatement()) {
 
-            // Delete the course
             deleteStmt.setInt(1, this.ID);
             int rowsDeleted = deleteStmt.executeUpdate();
-            
+
             if (rowsDeleted > 0) {
                 System.out.println("✅ Course Deleted Successfully.");
-                
-                // Check if the table exists before dropping
-                checkTableStmt.setString(1, ("COURSES_" + this.ID).toUpperCase()); 
+
+                // Check if table exists before dropping
+                checkTableStmt.setString(1, ("Courses_" + this.ID).toUpperCase());
                 ResultSet rs = checkTableStmt.executeQuery();
-                rs.next();
-                
-                if (rs.getInt(1) > 0) {
-                    // Drop the student table if it exists
+                if (rs.next() && rs.getInt(1) > 0) {
                     dropTableStmt.executeUpdate(dropTableQuery);
                     System.out.println("✅ Table Courses_" + this.ID + " deleted.");
                 } else {
@@ -196,6 +192,4 @@ public class Course {
             e.printStackTrace();
         }
     }
-
 }
-

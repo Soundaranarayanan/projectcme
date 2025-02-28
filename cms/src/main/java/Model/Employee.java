@@ -14,9 +14,11 @@ import Controller.DeleteDepartment;
 import Controller.DeleteEmployee;
 import Controller.DeleteStudent;
 import Controller.ReadClasses;
+import Controller.ReadCourseStudents;
 import Controller.ReadCourses;
 import Controller.ReadDepartments;
 import Controller.ReadEmployee;
+import Controller.ReadEmployeeCourses;
 import Controller.ReadStudents;
 import Controller.UpdateClass;
 import Controller.UpdateCourse;
@@ -190,10 +192,19 @@ public class Employee {
     		new DeleteStudent()
     };
     
+    private Operation[] profOperations = new Operation[] {
+    	new ReadDepartments(),
+    	new ReadClasses(),
+    	new ReadCourses(),
+    	new ReadEmployeeCourses(),
+    	new ReadCourseStudents()
+    	
+    };
+    
     
     public void showList(Database database, Scanner scanner) {
     	if(department.getName().equals("Management")) {
-    		System.out.println("Welcome to College Management System");
+    		System.out.println("\n---------------------------------------");
     		System.out.println("1. Add New Department");
     		System.out.println("2. Show all Departments");
     		System.out.println("3. Edit Department");
@@ -210,16 +221,32 @@ public class Employee {
     		System.out.println("14. Show all Employee");
     		System.out.println("15. Edit Employee");
     		System.out.println("16. Delete Employee");
-    		System.out.println("117. Add New Student");
+    		System.out.println("17. Add New Student");
     		System.out.println("18. Show all Students");
     		System.out.println("19. Edit Student");
     		System.out.println("20. Delete Student");
-    		
+    		System.out.println("---------------------------------------\n");
+
     		int selected = scanner.nextInt();
-    		managerOperations[selected-1].oper(database, scanner);
+    		managerOperations[selected-1].oper(database, scanner, getID());
     		showList(database,scanner);
     		
     	}else {
+    		System.out.println("\n--------------------------");
+    		System.out.println("1. Show all Departments");
+    		System.out.println("2. Show all Classes ");
+    		System.out.println("3. Show all Courses");
+    		System.out.println("4. Show my Courses");
+    		System.out.println("5. Show Course Students");
+    		System.out.println("6. Add Course Grades");
+    		System.out.println("7. Show Course Grades");
+    		System.out.println("8. Edit Course Grades");
+    		System.out.println("9. Delete Course Grades");
+    		System.out.println("--------------------------\n");
+    		
+    		int selected = scanner.nextInt();
+    		profOperations[selected-1].oper(database, scanner, getID());
+    		showList(database,scanner);
     		
     	}
     }

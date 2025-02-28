@@ -9,13 +9,13 @@ import Model.Student;
 public class UpdateStudent implements Operation{
 
 	@Override
-	public void oper(Database database, Scanner scanner) {
+	public void oper(Database database, Scanner scanner,int id) {
 		// TODO Auto-generated method stub
 		
 		System.out.println("Enter ID( -1 to show all Students) ; ");
 		int ID = scanner.nextInt();
 		while(ID < 0) {
-			new ReadStudents().oper(database, scanner);
+			new ReadStudents().oper(database, scanner, id);
 			System.out.println("Enter ID( -1 to show all Students) ; ");
 			ID = scanner.nextInt();
 		}
@@ -45,7 +45,7 @@ public class UpdateStudent implements Operation{
 		int classID = scanner.nextInt();
 		if(classID != -1) {
 			while(classID == -2) {
-				new ReadClasses().oper(database, scanner);
+				new ReadClasses().oper(database, scanner, id);
 				System.out.println("Enter the password");
 				String password = scanner.next();		
 				if(!password.equals("-1")) {

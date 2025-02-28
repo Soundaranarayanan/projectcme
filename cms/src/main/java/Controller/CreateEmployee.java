@@ -10,7 +10,7 @@ import Model.Department;
 public class CreateEmployee implements Operation {
 
     @Override
-    public void oper(Database database, Scanner scanner) {
+    public void oper(Database database, Scanner scanner, int id) {
         try {
             database.getStatement().execute("ALTER SESSION SET CURRENT_SCHEMA = Expleo");
 
@@ -38,7 +38,7 @@ public class CreateEmployee implements Operation {
             int deptID = scanner.nextInt();
 
             while (deptID < 0) {
-                new ReadDepartments().oper(database, scanner);
+                new ReadDepartments().oper(database, scanner,id);
                 System.out.printf("%-25s: ", "Enter Department (-1 to Show all Departments)");
                 deptID = scanner.nextInt();
             }

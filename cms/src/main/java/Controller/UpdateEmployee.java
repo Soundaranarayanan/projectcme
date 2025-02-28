@@ -9,12 +9,12 @@ import Model.Operation;
 public class UpdateEmployee implements Operation {
 
     @Override
-    public void oper(Database database, Scanner scanner) {
+    public void oper(Database database, Scanner scanner,int id) {
         System.out.print("Enter User ID (-1 to Show all Employees): ");
         int userID = scanner.nextInt();
 
         while (userID == -1) {
-            new ReadEmployee().oper(database, scanner);
+            new ReadEmployee().oper(database, scanner, id);
             System.out.print("Enter User ID (-1 to Show all Employees): ");
             userID = scanner.nextInt();
         }
@@ -67,7 +67,7 @@ public class UpdateEmployee implements Operation {
         int deptID = scanner.nextInt();
         if (deptID != -1) {
             while (deptID == -2) {
-                new ReadDepartments().oper(database, scanner);
+                new ReadDepartments().oper(database, scanner,id);
                 System.out.print("Enter Department (-1 to Keep current, -2 to Show all): ");
                 deptID = scanner.nextInt();
             }

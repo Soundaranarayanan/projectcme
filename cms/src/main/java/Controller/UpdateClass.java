@@ -8,7 +8,7 @@ import Model.Operation;
 public class UpdateClass implements Operation {
 
 	@Override
-	public void oper(Database database, Scanner scanner) {
+	public void oper(Database database, Scanner scanner, int id) {
 		// TODO Auto-generated method stub
 		
 		System.out.println("Enter Class ID (-1 to Show all Classes) : ");
@@ -16,7 +16,7 @@ public class UpdateClass implements Operation {
 		scanner.nextLine(); // ✅ Fix: Consume newline left after nextInt()
 
 		while (ID < 0) {
-			new ReadClasses().oper(database, scanner);
+			new ReadClasses().oper(database, scanner,id);
 			System.out.println("Enter Class ID (-1 to Show all Classes) : ");
 			ID = scanner.nextInt();
 			scanner.nextLine(); // ✅ Fix: Consume newline again
