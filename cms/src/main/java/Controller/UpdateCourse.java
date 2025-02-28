@@ -16,18 +16,24 @@ public class UpdateCourse implements Operation {
         System.out.println("Enter Course ID (-1 to show all): ");
         int ID = scanner.nextInt();
 
+        System.out.println("Enter Course ID (-1 to show all): ");
+         ID = scanner.nextInt();
+
+        // Loop until a valid (non-negative) Course ID is entered
         while (ID < 0) {
-            new ReadCourses().oper(database, scanner,id);
+            // If the user enters -1, show all courses
+            if (ID == -1) {
+                new ReadCourses().oper(database, scanner, id);
+            }
+
+            // Prompt the user again for a Course ID
             System.out.println("Enter Course ID (-1 to show all): ");
             ID = scanner.nextInt();
         }
 
         // Validate if the course exists
         Course c = new Course(ID, database);
-        if (c.getName() == null) {
-            System.out.println("❌ Course with ID " + ID + " does not exist.");
-            return;
-        }
+     
 
         scanner.nextLine(); // Consume leftover newline
         System.out.println("Enter Course Name (-1 to keep \"" + c.getName() + "\"): ");
@@ -38,11 +44,18 @@ public class UpdateCourse implements Operation {
         System.out.println("Enter Class ID (-1 to keep, -2 to show all): ");
         int classID = scanner.nextInt();
         if (classID == -2) {
-            new ReadClasses().oper(database, scanner,id);
+            new ReadClasses().oper(database, scanner, id);
             System.out.println("Enter Class ID (-1 to keep): ");
             classID = scanner.nextInt();
         }
-        if (classID != -1) c.setCurrentClass(new Class(classID, database));
+        if (classID != -1) {
+            Class newClass = new Class(classID, database);
+            if (newClass.getName() != null) {
+                c.setCurrentClass(newClass);
+            } else {
+                System.out.println("❌ Class with ID " + classID + " does not exist.");
+            }
+        }
 
         scanner.nextLine(); // Consume newline
 
@@ -62,11 +75,18 @@ public class UpdateCourse implements Operation {
         System.out.println("Enter Prof ID (-1 to keep, -2 to show all): ");
         int profID = scanner.nextInt();
         if (profID == -2) {
-            new ReadEmployee().oper(database, scanner,id);
+            new ReadEmployee().oper(database, scanner, id);
             System.out.println("Enter Prof ID (-1 to keep): ");
             profID = scanner.nextInt();
         }
-        if (profID != -1) c.setProf(new Employee(profID, database));
+        if (profID != -1) {
+            Employee newProf = new Employee(profID, database);
+            if (newProf.getFirstName() != null) {
+                c.setProf(newProf);
+            } else {
+                System.out.println("❌ Professor with ID " + profID + " does not exist.");
+            }
+        }
 
         scanner.nextLine(); // Consume newline
 
@@ -74,11 +94,18 @@ public class UpdateCourse implements Operation {
         System.out.println("Enter Department ID (-1 to keep, -2 to show all): ");
         int deptID = scanner.nextInt();
         if (deptID == -2) {
-            new ReadDepartments().oper(database, scanner,id);
+            new ReadDepartments().oper(database, scanner, id);
             System.out.println("Enter Department ID (-1 to keep): ");
             deptID = scanner.nextInt();
         }
-        if (deptID != -1) c.setDept(new Department(deptID, database));
+        if (deptID != -1) {
+            Department newDept = new Department(deptID, database);
+            if (newDept.getName() != null) {
+                c.setDept(newDept);
+            } else {
+                System.out.println("❌ Department with ID " + deptID + " does not exist.");
+            }
+        }
 
         // Update the course in the database
         c.update(database);
