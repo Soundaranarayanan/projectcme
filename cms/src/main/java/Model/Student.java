@@ -3,6 +3,10 @@ package Model;
 import java.sql.*;
 import java.util.Scanner;
 
+import Controller.ReadAvaliableCourses;
+import Controller.ReadStudentData;
+import Controller.UpdateStudentPassword;
+
 public class Student {
 
     private int ID;
@@ -153,13 +157,22 @@ public class Student {
         System.out.println("Class      : " + (c != null ? c.getName() : "None"));
         System.out.println("--------------------------------------------------");
     }
+    private Operation[] operations = new Operation[] {
+    	new ReadStudentData(),
+    	new ReadAvaliableCourses(),
+    	new UpdateStudentPassword()
+    		
+    };
     
     public void showList(Database database, Scanner scanner) {
     	System.out.println("\n------------------------------");
- 		System.out.println("1. Register Course ");
-		System.out.println("2. Show my Data    ");
-		System.out.println("3. Show my Grades   ");
+		System.out.println("1. Show my Data    ");
+		System.out.println("2. Show Avaliable Courses   ");
+		System.out.println("3. Change Password");
 		System.out.println("------------------------------\n");
-
+		
+		int selected = scanner.nextInt();
+		operations[selected-1].oper(database, scanner, getID());
+		showList(database,scanner);
     }
 }

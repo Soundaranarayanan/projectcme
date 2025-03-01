@@ -3,6 +3,7 @@ package Model;
 import java.sql.*;
 import java.util.Scanner;
 
+import Controller.AddCourseGrades;
 import Controller.CreateClass;
 import Controller.CreateCourse;
 import Controller.CreateDepartment;
@@ -24,6 +25,7 @@ import Controller.UpdateClass;
 import Controller.UpdateCourse;
 import Controller.UpdateDepartment;
 import Controller.UpdateEmployee;
+import Controller.UpdateEmployeePassword;
 import Controller.UpdateStudent;
 
 public class Employee {
@@ -189,7 +191,8 @@ public class Employee {
     		new CreateStudent(),
     		new ReadStudents(),
     		new UpdateStudent(),
-    		new DeleteStudent()
+    		new DeleteStudent(),
+    		new UpdateEmployeePassword()
     };
     
     private Operation[] profOperations = new Operation[] {
@@ -197,8 +200,9 @@ public class Employee {
     	new ReadClasses(),
     	new ReadCourses(),
     	new ReadEmployeeCourses(),
-    	new ReadCourseStudents()
-    	
+    	//new ReadCourseStudents(),
+    	//new AddCourseGrades()
+    	new UpdateEmployeePassword()
     };
     
     
@@ -225,6 +229,7 @@ public class Employee {
     		System.out.println("18. Show all Students");
     		System.out.println("19. Edit Student");
     		System.out.println("20. Delete Student");
+    		System.out.println("21. Change Passowrd");
     		System.out.println("---------------------------------------\n");
 
     		int selected = scanner.nextInt();
@@ -237,11 +242,8 @@ public class Employee {
     		System.out.println("2. Show all Classes ");
     		System.out.println("3. Show all Courses");
     		System.out.println("4. Show my Courses");
-    		System.out.println("5. Show Course Students");
-    		System.out.println("6. Add Course Grades");
-    		System.out.println("7. Show Course Grades");
-    		System.out.println("8. Edit Course Grades");
-    		System.out.println("9. Delete Course Grades");
+    		System.out.println("5. Change Password");
+
     		System.out.println("--------------------------\n");
     		
     		int selected = scanner.nextInt();
