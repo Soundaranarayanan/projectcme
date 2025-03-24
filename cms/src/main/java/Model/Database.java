@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class Database {
     private final String user = "system";
-    private final String pass = "karan";
+    private final String pass = "KIOT1234";
     private final String url = "jdbc:oracle:thin:@localhost:1521:xe";
     
     // Constructor calls connect() to ensure the initial connection
